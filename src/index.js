@@ -10,7 +10,8 @@ class Web3Provider extends React.Component {
     super(props);
 
     this.state = {
-      web3: null
+      web3: null,
+      error: null,
     };
   }
 
@@ -27,15 +28,23 @@ class Web3Provider extends React.Component {
     );
 
     this.setState({ web3 });
+
+    web3.eth.net.isListening()
+      .then(() => this.setState({ error: false }))
+      .catch(error => this.setState({ error }));
   }
 
   render() {
-    if (this.state.web3) {
-      return (
-        <Web3Context.Provider value={this.state.web3}>
-          {this.props.children}
-        </Web3Context.Provider>
-      );
+    if (this.state.web3 && this.state.error !== null) {
+      if (this.state.error) {
+        return this.props.error(this.state.error);
+      } else {
+        return (
+          <Web3Context.Provider value={this.state.web3}>
+            {this.props.children}
+          </Web3Context.Provider>
+        );
+      }
     } else {
       return this.props.loading;
     }

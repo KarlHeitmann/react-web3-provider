@@ -17,7 +17,11 @@ Add the `Web3Provider` to your root React component:
 import Web3Provider from 'react-web3-provider';
 
 ReactDOM.render(
-	<Web3Provider defaultWeb3Provider="https://mainnet.infura.io/YOUR_API_KEY" loading="Loading...">
+	<Web3Provider
+		defaultWeb3Provider="https://mainnet.infura.io/YOUR_API_KEY"
+		loading="Loading..."
+		error={(err) => `Connection error: ${err.message}`}
+	>
 		<App />
 	</Web3Provider>
 )
