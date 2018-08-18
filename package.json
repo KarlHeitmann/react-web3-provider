@@ -1,6 +1,6 @@
 {
   "name": "react-web3-provider",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Higher-order component (HOC) providing web3 context to React app",
   "main": "./dist/index.js",
   "scripts": {
