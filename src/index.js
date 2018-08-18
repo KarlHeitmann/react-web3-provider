@@ -54,6 +54,7 @@ class Web3Provider extends React.Component {
 Web3Provider.propTypes = {
   defaultWeb3Provider: PropTypes.string.isRequired,
   loading: PropTypes.node,
+  error: PropTypes.func,
 };
 
 export default Web3Provider;
