@@ -1,6 +1,6 @@
 {
   "name": "react-web3-provider",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Higher-order component (HOC) providing web3 context to React app",
   "main": "./dist/index.js",
   "scripts": {
@@ -29,7 +29,7 @@
   "dependencies": {
     "prop-types": "^15.6.2",
     "react": "^16.0.0",
-    "web3": "0.20.7"
+    "web3": "^1.0.0-beta.35"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
