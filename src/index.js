@@ -15,23 +15,36 @@ class Web3Provider extends React.Component {
     };
   }
 
-  componentDidMount() {
-    const web3 = new Web3(
-      // Detect MetaMask using global window object
-      window.web3 ?
-      // Use MetaMask provider
-      window.web3.currentProvider :
-      // Use wallet-enabled browser provider
-      Web3.givenProvider ||
-      // Create a provider with Infura node
-      new Web3.providers.HttpProvider(this.props.defaultWeb3Provider)
-    );
-
+  setWeb3(web3) {
     this.setState({ web3 });
 
     web3.eth.net.isListening()
       .then(() => this.setState({ error: false }))
       .catch(error => this.setState({ error }));
+  }
+
+  componentDidMount() {
+    if (window.web3) {
+      // Use MetaMask using global window object
+      this.setWeb3(new Web3(window.web3));
+    } else if (Web3.givenProvider) {
+      // Use wallet-enabled browser provider
+      this.setWeb3(new Web3(Web3.givenProvider));
+    } else {
+      // RPC fallback (e.g. INFURA node)
+      this.setWeb3(new Web3(new Web3.providers.HttpProvider(this.props.defaultWeb3Provider)))
+
+      // Breaking changes in MetaMask => see: https://medium.com/metamask/https-medium-com-metamask-breaking-change-injecting-web3-7722797916a8
+      // Listen for provider injection
+      window.addEventListener('message', ({ data }) => {
+        if (data && data.type && data.type === 'ETHEREUM_PROVIDER_SUCCESS') {
+          this.setWeb3(new Web3(window.ethereum));
+        }
+      });
+
+      // Request provider
+      window.postMessage({ type: 'ETHEREUM_PROVIDER_REQUEST' }, '*');
+    }
   }
 
   render() {
