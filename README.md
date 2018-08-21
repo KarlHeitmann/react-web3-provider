@@ -11,10 +11,9 @@ Ready for the [upcoming changes](https://medium.com/metamask/https-medium-com-me
 $ yarn add react-web3-provider
 ```
 
-## Usage
+## Basic usage
 
 Add the `Web3Provider` to your root React component:
-
 ```js
 import Web3Provider from 'react-web3-provider';
 
@@ -29,6 +28,7 @@ ReactDOM.render(
 )
 ```
 
+
 Then in component where you want to use Web3:
 ```js
 import { withWeb3 } from 'react-web3-provider';
@@ -41,6 +41,44 @@ class MyComponent {
 
 		// Version 1.0.0-beta.35
 		return "Web3 version: {web3.version}";
+	}
+}
+
+export default withWeb3(MyComponent);
+```
+
+## Custom web3 state handling
+
+You can render the web3 state somewhere else in the page instead of the global `loading` and `error` components:
+```js
+import Web3Provider from 'react-web3-provider';
+
+ReactDOM.render(
+	<Web3Provider
+		defaultWeb3Provider="https://mainnet.infura.io/YOUR_API_KEY"
+	>
+		<App />
+	</Web3Provider>
+)
+```
+
+
+You can use the injected `web3State` property in your components:
+```js
+import { withWeb3 } from 'react-web3-provider';
+
+class MyComponent {
+	render() {
+		const { web3, web3State } = this.props;
+
+		return (
+			<pre>
+				{web3State.isConnected && "Connected!\n"}
+				{web3State.isLoading && "Loading...\n"}
+				{web3State.error && `Connection error: ${web3State.error.message}\n`}
+				Web3 version: {web3.version}
+			</pre>
+		);
 	}
 }
 
