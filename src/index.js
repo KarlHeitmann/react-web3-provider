@@ -1,5 +1,6 @@
 import React from 'react';
 import Web3 from 'web3';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import PropTypes from 'prop-types';
 
 
@@ -12,7 +13,7 @@ class Web3Provider extends React.Component {
     this.state = {
       web3: null,
       connection: {
-        isConnected: false,
+        connected: false,
         isLoading: true,
         error: null,
       }
@@ -91,12 +92,13 @@ Web3Provider.propTypes = {
 export default Web3Provider;
 
 export const withWeb3 = (WrappedComponent) => {
-  return class extends React.Component {
+  class Web3Consumer extends React.Component {
     render() {
       return (
         <Web3Context.Consumer>
           {context =>
             <WrappedComponent
+              {...this.props}
               web3={context.web3}
               web3State={context.connection}
             />
@@ -105,4 +107,10 @@ export const withWeb3 = (WrappedComponent) => {
       );
     }
   }
+
+  if (WrappedComponent.defaultProps) {
+    Web3Consumer.defaultProps = { ...WrappedComponent.defaultProps };
+  }
+
+  return hoistNonReactStatics(Web3Consumer, WrappedComponent);
 }
