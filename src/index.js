@@ -20,7 +20,6 @@ class Web3Provider extends React.Component {
   }
 
   setWeb3(web3) {
-    const web3Instance = new Web3(web3);
     this.setState({ web3: new Web3(web3) }, () => {
       this.state.web3.eth.net.isListening()
       .then(() => this.setState({
