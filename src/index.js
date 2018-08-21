@@ -12,7 +12,7 @@ class Web3Provider extends React.Component {
     this.state = {
       web3: null,
       connection: {
-        connected: false,
+        isConnected: false,
         isLoading: true,
         error: null,
       }
