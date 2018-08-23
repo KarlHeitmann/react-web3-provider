@@ -84,3 +84,6 @@ class MyComponent {
 
 export default withWeb3(MyComponent);
 ```
+
+### Contributors
+- Peter ([HUSSY.io](https://hussy.io))
