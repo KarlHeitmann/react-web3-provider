@@ -1,7 +1,7 @@
 # react-web3-provider
 Simple higher-order component (HOC) providing a web3 context to React app.
 
-Detects whether the user is using MetaMask or Ethereum wallet-enabled browser. If not, it will access the Ethereum network through a given RPC fallback (e.g. INFURA node).
+Detects whether the user is using MetaMask or Ethereum wallet-enabled browser. If not, it will access the Ethereum network through a given RPC fallback server (e.g. INFURA node).
 
 Ready for the [upcoming changes](https://medium.com/metamask/https-medium-com-metamask-breaking-change-injecting-web3-7722797916a8) in MetaMask.
 
