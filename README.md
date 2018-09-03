@@ -20,7 +20,7 @@ import Web3Provider from 'react-web3-provider';
 
 ReactDOM.render(
 	<Web3Provider
-		defaultWeb3Provider={new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/YOUR_API_KEY"))}
+		defaultProvider={(cb) => cb(new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/YOUR_API_KEY")))}
 		loading="Loading..."
 		error={(err) => `Connection error: ${err.message}`}
 	>
@@ -57,7 +57,7 @@ import Web3Provider from 'react-web3-provider';
 
 ReactDOM.render(
 	<Web3Provider
-		defaultWeb3Provider={new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/YOUR_API_KEY"))}
+		defaultProvider={(cb) => cb(new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/YOUR_API_KEY")))}
 	>
 		<App />
 	</Web3Provider>
@@ -87,6 +87,26 @@ class MyComponent {
 export default withWeb3(MyComponent);
 ```
 
+
+## Web3 Provider filtering
+It may be useful to skip the MetaMask Provider if the user has the MetaMask extension installed but is currently not signed-in. We can use `acceptProvider` parameter to filter out Web3 Provider.
+```js
+ReactDOM.render(
+	<Web3Provider
+		defaultProvider={...}
+		acceptProvider={(web3, accept, reject) => {
+			web3.eth.getAccounts().then((accounts) => {
+				if (accounts.length >= 1) accept();
+				else reject();
+			});
+		}}
+	>
+		<App />
+	</Web3Provider>
+);
+```
+
+
 ## Hooked wallet
 More complex example demonstrating transaction sending with a zero-client wallet.
 ```js
@@ -99,54 +119,60 @@ import RpcSubprovider from 'web3-provider-engine/subproviders/rpc';
 import waterfall from 'async-waterfall';
 import Web3Provider from 'react-web3-provider';
 
-// Light-wallet options
-const vaultOpts = {
-	seedPhrase: '...',
-	password: '...',
-	hdPathString: "m/44'/60'/0'/0",
-}
-const lightWalletEnabled = true;
+const defaultWeb3Provider = (cb) => {
+	// Light-wallet options
+	const vaultOpts = {
+		seedPhrase: '...',
+		password: '...',
+		hdPathString: "m/44'/60'/0'/0",
+	}
+	const lightWalletEnabled = true;
 
-waterfall([
-	(wcb) => wcb(null, new Web3ProviderEngine()),
-	(engine, wcb) => {
-		if (lightWalletEnabled) {
-			try {
-				Lightwallet.keystore.createVault(vaultOpts, (err1, ks) => {
-					if (err1) throw err1;
+	waterfall([
+		// 1. Initialize Web3 Provider engine
+		(wcb) => wcb(null, new Web3ProviderEngine()),
+		// 2. Add Hooked wallet sub-provider
+		(engine, wcb) => {
+			if (lightWalletEnabled) {
+				try {
+					Lightwallet.keystore.createVault(vaultOpts, (err1, ks) => {
+						if (err1) throw err1;
 
-					ks.keyFromPassword(vaultOpts.password, (err2, pwDerivedKey) => {
-						if (err2) throw err2;
-		
-						ks.generateNewAddress(pwDerivedKey, 1);
-						engine.addProvider(new HookedWalletSubprovider({
-							getAccounts: (cb) => cb(null, ks.getAddresses()),
-							signTransaction: (tx, cb) => ks.signTransaction(tx, cb),
-						}));
-						wcb(null, engine);
+						ks.keyFromPassword(vaultOpts.password, (err2, pwDerivedKey) => {
+							if (err2) throw err2;
+			
+							ks.generateNewAddress(pwDerivedKey, 1);
+							engine.addProvider(new HookedWalletSubprovider({
+								getAccounts: (ecb) => cb(null, ks.getAddresses()),
+								signTransaction: (tx, ecb) => ks.signTransaction(tx, ecb),
+							}));
+							wcb(null, engine);
+						});
 					});
-				});
-			} catch((err) => wcb(err, engine));
-		} else wcb(null, engine);
-	},
-	(engine, wcb) => {
-		const web3 = new Web3(engine);
-		engine.addProvider(new SubscriptionsSubprovider());
-		engine.addProvider(new RpcSubprovider({
-			rpcUrl: 'https://mainnet.infura.io/YOUR_API_KEY',
-		}));
-		engine.start();
-		wcb(null, web3);
-	},
-], (_, web3) => {
-	ReactDOM.render(
-		<Web3Provider
-			defaultWeb3Provider={web3}
-		>
-			<App />
-		</Web3Provider>
-	);
-});
+				} catch((err) => wcb(err, engine));
+			} else wcb(null, engine);
+		},
+		// 3. Add RPC subprovider
+		(engine, wcb) => {
+			const web3 = new Web3(engine);
+			engine.addProvider(new SubscriptionsSubprovider());
+			engine.addProvider(new RpcSubprovider({
+				rpcUrl: 'https://mainnet.infura.io/YOUR_API_KEY',
+			}));
+			engine.start();
+			wcb(null, web3);
+		},
+		// 4. Pass the selected Web3 to the Web3Provider callback
+	], (_, web3) => cb(web3));
+}
+
+ReactDOM.render(
+	<Web3Provider
+		defaultProvider={defaultWeb3Provider}
+	>
+		<App />
+	</Web3Provider>
+);
 ```
 
 Sending transaction:
