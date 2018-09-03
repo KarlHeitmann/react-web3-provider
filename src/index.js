@@ -38,30 +38,6 @@ class Web3Provider extends React.Component {
       // Request provider
       window.postMessage({ type: 'ETHEREUM_PROVIDER_REQUEST' }, '*');
     }));
-
-    /*if (window.web3 && this.acceptProvider(window.web3)) {
-      // Use MetaMask using global window object
-      this.setWeb3(window.web3);
-    } else if (Web3.givenProvider && this.acceptProvider(window.web3)) {
-      // Use wallet-enabled browser provider
-      this.setWeb3(Web3.givenProvider);
-    } else {
-      // Web3 fallback
-      if (this.props.defaultProvider) {
-        this.props.defaultProvider(this.setWeb3.bind(this));
-      }
-
-      // Breaking changes in MetaMask => see: https://medium.com/metamask/https-medium-com-metamask-breaking-change-injecting-web3-7722797916a8
-      // Listen for provider injection
-      window.addEventListener('message', ({ data }) => {
-        if (data && data.type && data.type === 'ETHEREUM_PROVIDER_SUCCESS' && this.acceptProvider(window.ethereum)) {
-          this.setWeb3(window.ethereum);
-        }
-      });
-
-      // Request provider
-      window.postMessage({ type: 'ETHEREUM_PROVIDER_REQUEST' }, '*');
-    }*/
   }
 
   setWeb3(web3) {
