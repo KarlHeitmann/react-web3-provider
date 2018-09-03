@@ -48,8 +48,11 @@ class Web3Provider extends React.Component {
       // Use wallet-enabled browser provider
       this.setWeb3(Web3.givenProvider);
     } else {
-      // RPC fallback (e.g. INFURA node)
-      this.setWeb3(new Web3.providers.HttpProvider(this.props.defaultWeb3Provider))
+      console.log('BAHAHA');
+      // Web3 fallback
+      if (this.props.defaultWeb3Provider) {
+        this.setWeb3(this.props.defaultWeb3Provider);
+      }
 
       // Breaking changes in MetaMask => see: https://medium.com/metamask/https-medium-com-metamask-breaking-change-injecting-web3-7722797916a8
       // Listen for provider injection
@@ -84,7 +87,7 @@ class Web3Provider extends React.Component {
 }
 
 Web3Provider.propTypes = {
-  defaultWeb3Provider: PropTypes.string.isRequired,
+  defaultWeb3Provider: PropTypes.object,
   loading: PropTypes.node,
   error: PropTypes.func,
 };
