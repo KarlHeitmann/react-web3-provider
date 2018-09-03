@@ -89,7 +89,7 @@ export default withWeb3(MyComponent);
 
 
 ## Web3 Provider filtering
-It may be useful to skip the MetaMask Provider if the user has the MetaMask extension installed but is currently not signed-in. We can use `acceptProvider` parameter to filter out Web3 Provider.
+It may be useful to skip the MetaMask Provider if the user has the MetaMask extension installed but is currently not signed-in. We can use `acceptProvider` parameter to filter out Web3 Provider. The given `defaultProvider` is always accepted.
 ```js
 ReactDOM.render(
 	<Web3Provider
