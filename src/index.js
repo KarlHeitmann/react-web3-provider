@@ -16,28 +16,8 @@ class Web3Provider extends React.Component {
         connected: false,
         isLoading: true,
         error: null,
-      }
+      },
     };
-  }
-
-  setWeb3(web3) {
-    this.setState({ web3: new Web3(web3) }, () => {
-      this.state.web3.eth.net.isListening()
-      .then(() => this.setState({
-        connection: {
-          isConnected: true,
-          isLoading: false,
-          error: null
-        }
-      }))
-      .catch(error => this.setState({
-        connection: {
-          isConnected: false,
-          isLoading: false,
-          error
-        }
-      }));
-    });
   }
 
   componentDidMount() {
@@ -48,7 +28,6 @@ class Web3Provider extends React.Component {
       // Use wallet-enabled browser provider
       this.setWeb3(Web3.givenProvider);
     } else {
-      console.log('BAHAHA');
       // Web3 fallback
       if (this.props.defaultWeb3Provider) {
         this.setWeb3(this.props.defaultWeb3Provider);
@@ -67,26 +46,49 @@ class Web3Provider extends React.Component {
     }
   }
 
+  setWeb3(web3) {
+    this.setState({ web3: new Web3(web3) }, () => {
+      this.state.web3.eth.net.isListening()
+      .then(() => this.setState({
+        connection: {
+          isConnected: true,
+          isLoading: false,
+          error: null,
+        },
+      }))
+      .catch((error) => this.setState({
+        connection: {
+          isConnected: false,
+          isLoading: false,
+          error,
+        },
+      }));
+    });
+  }
+
   render() {
     const { web3, connection } = this.state;
     if (this.props.loading && connection.isLoading) {
       return this.props.loading;
     } else if (this.props.error && connection.error) {
       return this.props.error(connection.error);
-    } else {
-      return (
-        <Web3Context.Provider value={{
-          web3: this.state.web3,
-          connection: this.state.connection,
-        }}>
-          {this.props.children}
-        </Web3Context.Provider>
-      );
     }
+
+    return (
+      <Web3Context.Provider
+        value={{
+          web3,
+          connection: this.state.connection,
+        }}
+      >
+        {this.props.children}
+      </Web3Context.Provider>
+    );
   }
 }
 
 Web3Provider.propTypes = {
+  children: PropTypes.node.isRequired,
   defaultWeb3Provider: PropTypes.object,
   loading: PropTypes.node,
   error: PropTypes.func,
@@ -95,17 +97,17 @@ Web3Provider.propTypes = {
 export default Web3Provider;
 
 export const withWeb3 = (WrappedComponent) => {
-  class Web3Consumer extends React.Component {
+  class Web3Consumer extends React.Component { // eslint-disable-line
     render() {
       return (
         <Web3Context.Consumer>
-          {context =>
+          {(context) => (
             <WrappedComponent
               {...this.props}
               web3={context.web3}
               web3State={context.connection}
             />
-          }
+          )}
         </Web3Context.Consumer>
       );
     }
@@ -116,4 +118,4 @@ export const withWeb3 = (WrappedComponent) => {
   }
 
   return hoistNonReactStatics(Web3Consumer, WrappedComponent);
-}
+};

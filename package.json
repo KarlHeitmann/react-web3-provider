@@ -1,6 +1,6 @@
 {
   "name": "react-web3-provider",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Higher-order component (HOC) providing web3 context to React app",
   "main": "./dist/index.js",
   "scripts": {
@@ -18,7 +18,8 @@
     "infura",
     "MetaMask",
     "hoc",
-    "provider"
+    "provider",
+    "lightwallet"
   ],
   "author": "Peter Tulala <peter@hussy.io>",
   "license": "MIT",

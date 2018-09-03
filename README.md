@@ -156,7 +156,6 @@ import { withWeb3 } from 'react-web3-provider';
 
 class MyComponent {
 	sendEther(amount, to) {
-		console.log('SEND');
 		const { web3 } = this.props;
 
 		waterfall([
