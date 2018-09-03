@@ -88,7 +88,7 @@ export default withWeb3(MyComponent);
 ```
 
 ## Hooked wallet
-More complex example demonstrating transaction sending from a zero-client wallet.
+More complex example demonstrating transaction sending with a zero-client wallet.
 ```js
 import Web3 from 'web3';
 import Lightwallet from 'eth-lightwallet';
@@ -183,7 +183,7 @@ class MyComponent {
 		return <button onClick={() => this.sendEther(0.1, '0x12345...')}>SEND TRANSACTION</button>;
 	}
 }
-
+```
 
 
 ## Contributors
