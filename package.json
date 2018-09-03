@@ -27,6 +27,8 @@
   },
   "homepage": "https://github.com/hussy-io/react-web3-provider#readme",
   "dependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-react": "^6.24.1",
     "hoist-non-react-statics": "^3.0.1",
     "prop-types": "^15.6.2",
     "react": "^16.0.0",
